@@ -70,17 +70,11 @@ async def get():
 
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: int):
-    clients = {}
-    names = iter(['Fox',  'Aibek', 'Meder'])
-
     await manager.connect(websocket)
 
     try:
         while True:
-            if client_id not in clients:
-                clients[client_id] = next(names)
             data = await websocket.receive_text()
-            print(manager.active_connections)
-            await manager.broadcast(f"{clients[client_id]}: {data}")
+            await manager.broadcast(f"Client {client_id}: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
